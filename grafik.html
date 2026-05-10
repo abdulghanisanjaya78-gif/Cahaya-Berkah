@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grafik — CBL</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body onload="cekLogin(); cekRole(); renderCharts()">
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <img src="logo.png" class="nav-logo" alt="Logo">
+    <span class="nav-title">Cahaya Berkah</span>
+  </a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="menuNav"></div>
+</nav>
+
+<div class="page-wrap">
+<div class="container">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Total Nilai per Jenis Barang</div>
+    <div class="chart-wrap">
+      <canvas id="chartNilai"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚖️</span> Total Berat per Jenis Barang</div>
+    <div class="chart-wrap">
+      <canvas id="chartKg"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> Tren Transaksi per Hari (30 hari terakhir)</div>
+    <div class="chart-wrap">
+      <canvas id="chartTren"></canvas>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+<script>
+function renderCharts() {
+  const data = getData();
+
+  // By Jenis - Nilai
+  const nilaiByJenis = {};
+  const kgByJenis = {};
+  data.forEach(d => {
+    nilaiByJenis[d.jenis] = (nilaiByJenis[d.jenis] || 0) + d.total;
+    kgByJenis[d.jenis]    = (kgByJenis[d.jenis]    || 0) + parseFloat(d.kg);
+  });
+
+  const colors = ['#22d3ee','#0ea5e9','#4ade80','#fbbf24','#f87171','#a78bfa','#fb923c','#38bdf8'];
+
+  new Chart(document.getElementById('chartNilai'), {
+    type: 'bar',
+    data: {
+      labels: Object.keys(nilaiByJenis),
+      datasets: [{ label: 'Nilai (Rp)', data: Object.values(nilaiByJenis),
+        backgroundColor: colors.map(c => c + '33'), borderColor: colors,
+        borderWidth: 2, borderRadius: 8 }]
+    },
+    options: chartOpts(v => 'Rp ' + formatRp(v))
+  });
+
+  new Chart(document.getElementById('chartKg'), {
+    type: 'bar',
+    data: {
+      labels: Object.keys(kgByJenis),
+      datasets: [{ label: 'Berat (kg)', data: Object.values(kgByJenis),
+        backgroundColor: colors.map(c => c + '33'), borderColor: colors,
+        borderWidth: 2, borderRadius: 8 }]
+    },
+    options: chartOpts(v => v.toFixed(1) + ' kg')
+  });
+
+  // Tren 30 hari
+  const now = new Date();
+  const days = Array.from({ length: 30 }, (_, i) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (29 - i));
+    return toDateStr(d);
+  });
+
+  const trenData = days.map(day => data.filter(d => toDateStr(new Date(d.waktu)) === day).length);
+  const trenLabels = days.map(d => d.slice(5)); // MM-DD
+
+  new Chart(document.getElementById('chartTren'), {
+    type: 'line',
+    data: {
+      labels: trenLabels,
+      datasets: [{ label: 'Transaksi', data: trenData, borderColor: '#22d3ee',
+        backgroundColor: 'rgba(34,211,238,0.1)', fill: true,
+        tension: 0.4, pointRadius: 3 }]
+    },
+    options: chartOpts(v => v + ' trx')
+  });
+}
+
+function chartOpts(tickCb) {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 11 }, callback: tickCb } }
+    }
+  };
+}
+</script>
+<script>
+function toggleMenu() {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

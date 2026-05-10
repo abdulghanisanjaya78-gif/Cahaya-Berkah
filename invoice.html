@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice — CBL</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="loadStruk()">
+
+<nav class="no-print">
+  <a class="nav-brand" href="index.html">
+    <img src="logo.png" class="nav-logo" alt="Logo">
+    <span class="nav-title">Cahaya Berkah</span>
+  </a>
+  <div class="nav-links">
+    <a href="input.html"><span class="nav-icon">✏️</span><span class="nav-label">Input Baru</span></a>
+    <a href="rekap.html"><span class="nav-icon">📋</span><span class="nav-label">Rekap</span></a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+<div class="container">
+<div class="invoice-wrap">
+
+  <div class="card">
+
+    <!-- Header -->
+    <div class="invoice-header">
+      <img src="logo.png" class="invoice-logo" alt="Logo CBL">
+      <div>
+        <div class="invoice-title">CV Cahaya Berkah Limbah</div>
+        <div class="invoice-subtitle">Jual Beli & Pengelolaan Limbah</div>
+      </div>
+    </div>
+
+    <div class="invoice-divider"></div>
+
+    <!-- Meta -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;font-size:0.85rem">
+      <div>
+        <div style="color:var(--text-muted);margin-bottom:4px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em">No. Invoice</div>
+        <div id="invId" style="font-weight:600">—</div>
+      </div>
+      <div>
+        <div style="color:var(--text-muted);margin-bottom:4px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em">Tanggal</div>
+        <div id="invTanggal" style="font-weight:600">—</div>
+      </div>
+      <div>
+        <div style="color:var(--text-muted);margin-bottom:4px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em">Supplier / Pengantar</div>
+        <div id="invSupplier" style="font-weight:600">—</div>
+      </div>
+    </div>
+
+    <div class="invoice-divider"></div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Jenis Barang</th>
+            <th>Berat (kg)</th>
+            <th>Harga/kg</th>
+            <th style="text-align:right">Total</th>
+          </tr>
+        </thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Total -->
+    <div class="invoice-total-row">
+      <div class="invoice-total-label">TOTAL PEMBAYARAN</div>
+      <div class="invoice-total-value" id="invTotal">Rp 0</div>
+    </div>
+
+    <div class="invoice-divider"></div>
+
+    <!-- Tanda Tangan -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;text-align:center;font-size:0.82rem">
+      <div>
+        <div style="color:var(--text-muted);margin-bottom:60px">Penerima Barang</div>
+        <div style="border-top:1px solid var(--card-border);padding-top:8px">( __________________ )</div>
+      </div>
+      <div>
+        <div style="color:var(--text-muted);margin-bottom:60px">Petugas CBL</div>
+        <div style="border-top:1px solid var(--card-border);padding-top:8px">( __________________ )</div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row no-print" style="margin-top:18px">
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Invoice</button>
+      <a class="btn btn-outline" href="input.html">✏️ Input Baru</a>
+      <a class="btn btn-outline" href="rekap.html">📋 Lihat Rekap</a>
+    </div>
+
+  </div>
+
+</div>
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — CV Cahaya Berkah Limbah</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="login-page">
+
+  <nav>
+    <a class="nav-brand" href="index.html">
+      <img src="logo.png" class="nav-logo" alt="Logo CBL">
+      <span class="nav-title">Cahaya Berkah</span>
+    </a>
+    <div class="nav-login-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="login.html" class="btn-login-nav">🔐 Login</a>
+    </div>
+  </nav>
+
+  <div class="login-center">
+    <div class="login-box">
+      <div class="login-logo-wrap">
+        <img src="logo.png" class="login-logo" alt="Logo CBL">
+        <div class="login-title">Cahaya Berkah</div>
+        <div class="login-sub">Sistem Manajemen Limbah</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Username</label>
+        <input id="uname" type="text" placeholder="Masukkan username" autocomplete="username">
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Password</label>
+        <input id="upass" type="password" placeholder="Masukkan password" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">
+        🔐 Masuk
+      </button>
+
+      <div class="login-error" id="loginErr">Username atau password salah!</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+<script>
+  if (isLoggedIn()) location.href = 'index.html';
+
+  function doLogin() {
+    const u = document.getElementById('uname').value.trim();
+    const p = document.getElementById('upass').value;
+    const err = document.getElementById('loginErr');
+    err.style.display = 'none';
+
+    const user = USERS[u];
+    if (user && user.pass === p) {
+      localStorage.setItem('login', 'true');
+      localStorage.setItem('role', user.role);
+      localStorage.setItem('username', u);
+      location.href = 'index.html';
+    } else {
+      err.style.display = 'block';
+      err.style.animation = 'none';
+      requestAnimationFrame(() => { err.style.animation = 'shake 0.4s ease'; });
+    }
+  }
+</script>
+</body>
+</html>

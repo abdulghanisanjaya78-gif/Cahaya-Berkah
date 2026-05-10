@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setting Harga — CBL</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="cekLogin(); cekRole(); cekAdminOnly(); renderHarga()">
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <img src="logo.png" class="nav-logo" alt="Logo">
+    <span class="nav-title">Cahaya Berkah</span>
+  </a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="menuNav"></div>
+</nav>
+
+<div class="page-wrap">
+<div class="container">
+
+  <!-- Tambah Jenis -->
+  <div class="card">
+    <div class="card-title"><span class="icon">➕</span> Tambah Jenis Barang</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nama Jenis</label>
+        <input id="namaJenis" type="text" placeholder="Contoh: Aluminium">
+      </div>
+      <div class="form-group">
+        <label>Harga per kg (Rp)</label>
+        <input id="hargaJenis" type="number" placeholder="Contoh: 15000">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="tambahJenis()">➕ Tambahkan</button>
+    </div>
+  </div>
+
+  <!-- Daftar Harga -->
+  <div class="card">
+    <div class="card-title"><span class="icon">💰</span> Daftar Harga Saat Ini</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Jenis Barang</th>
+            <th>Harga / kg (Rp)</th>
+            <th style="text-align:right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="hargaBody"></tbody>
+      </table>
+    </div>
+
+    <div class="btn-row" style="margin-top:18px">
+      <button class="btn btn-outline" onclick="resetHarga()">🔄 Reset ke Default</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+<script>
+function cekAdminOnly() {
+  if (getRole() !== 'admin') {
+    location.href = 'index.html';
+  }
+}
+
+function resetHarga() {
+  if (!confirm('Reset semua harga ke default?')) return;
+  saveHarga(defaultHarga());
+  renderHarga();
+  showToast('Harga direset ke default', 'success');
+}
+</script>
+<script>
+function toggleMenu() {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

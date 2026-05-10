@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beranda — CV Cahaya Berkah Limbah</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="cekRole(); loadStatHome()">
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <img src="logo.png" class="nav-logo" alt="Logo">
+    <span class="nav-title">Cahaya Berkah</span>
+  </a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="menuNav"></div>
+</nav>
+
+<div class="page-wrap">
+<div class="container">
+
+  <div class="hero">
+    <img src="logo.png" class="hero-logo" alt="Logo CBL">
+    <h1>CV Cahaya Berkah Limbah</h1>
+    <p>Usaha jual beli dan pengelolaan limbah dengan sistem perhitungan berdasarkan berat (kg).
+       Melayani Besi, Kardus, Tembaga, Aki, SWL, dan berbagai jenis limbah lainnya.</p>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <span class="badge badge-blue">📍 Sistem Digital</span>
+      <span class="badge badge-green">✅ Real-time</span>
+      <span class="badge badge-amber">📊 Rekap Otomatis</span>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="statTrx">0</div>
+      <div class="stat-label">Total Transaksi</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statHari">0</div>
+      <div class="stat-label">Transaksi Hari Ini</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statKg">0 kg</div>
+      <div class="stat-label">Total Berat</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statNilai">Rp 0</div>
+      <div class="stat-label">Total Nilai</div>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <div class="card">
+      <div class="card-title"><span class="icon">♻️</span> Jenis Limbah</div>
+      <div id="layananList" style="display:flex;flex-direction:column;gap:7px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📞</span> Kontak</div>
+      <div style="display:flex;flex-direction:column;gap:9px;font-size:0.88rem;color:var(--text-dim)">
+        <div>📍 Jl. Cahaya Berkah No.1, Indonesia</div>
+        <div>📞 08xxxxxxxxxx</div>
+        <div>🕐 Senin – Sabtu, 08.00 – 17.00</div>
+        <div>✉️ info@cahayaberkah.co.id</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+<script>
+function loadStatHome() {
+  const data = getData();
+  const today = toDateStr(new Date());
+  document.getElementById('statTrx').textContent  = data.length;
+  document.getElementById('statHari').textContent = data.filter(d => toDateStr(new Date(d.waktu)) === today).length;
+  document.getElementById('statKg').textContent   = data.reduce((s,d) => s + parseFloat(d.kg), 0).toFixed(1) + ' kg';
+  document.getElementById('statNilai').textContent= 'Rp ' + formatRp(data.reduce((s,d) => s + d.total, 0));
+
+  const h = getHarga();
+  const listEl = document.getElementById('layananList');
+  listEl.innerHTML = Object.keys(h).map(k => `
+    <div style="display:flex;justify-content:space-between;align-items:center;
+                padding:8px 11px;background:rgba(255,255,255,0.03);border-radius:8px;
+                border:1px solid var(--card-border)">
+      <span style="font-size:0.84rem">${k}</span>
+      <span style="font-size:0.82rem;color:var(--accent);font-weight:600">Rp ${formatRp(h[k])}/kg</span>
+    </div>`).join('');
+}
+
+function toggleMenu() {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Transaksi — CBL</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="cekLogin(); cekRole(); loadHarga()">
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <img src="logo.png" class="nav-logo" alt="Logo">
+    <span class="nav-title">Cahaya Berkah</span>
+  </a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="menuNav"></div>
+</nav>
+
+<div class="page-wrap">
+<div class="container">
+
+  <!-- Form Input -->
+  <div class="card">
+    <div class="card-title"><span class="icon">✏️</span> Input Transaksi</div>
+
+    <div class="form-grid">
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Nama Supplier / Pengantar</label>
+        <input id="namaSupplier" type="text" placeholder="Opsional, nama supplier atau pengantar">
+      </div>
+
+      <div class="form-group">
+        <label>Jenis Barang</label>
+        <select id="jenis" onchange="setHarga()"></select>
+      </div>
+
+      <div class="form-group">
+        <label>Harga Satuan</label>
+        <input id="hargaSatuan" readonly placeholder="Otomatis">
+        <input id="hargaRaw" type="hidden">
+      </div>
+
+      <div class="form-group">
+        <label>Berat (kg)</label>
+        <input id="kg" type="number" min="0.1" step="0.1" placeholder="Contoh: 12.5"
+               oninput="hitungTotal()">
+      </div>
+
+      <div class="form-group">
+        <label>Total</label>
+        <input id="totalPreview" readonly placeholder="Rp 0" style="color:var(--accent);font-weight:700">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="tambahKeranjang()">➕ Tambah ke Keranjang</button>
+    </div>
+  </div>
+
+  <!-- Keranjang -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🛒</span> Keranjang</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Jenis</th>
+            <th>Berat</th>
+            <th>Harga/kg</th>
+            <th style="text-align:right">Total</th>
+            <th style="text-align:right">Hapus</th>
+          </tr>
+        </thead>
+        <tbody id="keranjangBody">
+          <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px">Belum ada item</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;
+                padding:14px 18px;background:rgba(34,211,238,0.06);border-radius:10px;
+                border:1px solid rgba(34,211,238,0.15)">
+      <span style="font-size:0.85rem;color:var(--text-dim)">Grand Total</span>
+      <span id="totalKeranjang" style="font-family:'Syne',sans-serif;font-size:1.2rem;
+            font-weight:800;color:var(--accent)">Rp 0</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="simpanTransaksi()">💾 Simpan & Buat Invoice</button>
+      <button class="btn btn-outline" onclick="keranjang=[];renderKeranjang()">🗑️ Kosongkan</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+<script>
+function toggleMenu() {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

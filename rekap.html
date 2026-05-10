@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rekap — CBL</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+</head>
+<body onload="cekLogin(); cekRole(); initRekap()">
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <img src="logo.png" class="nav-logo" alt="Logo">
+    <span class="nav-title">Cahaya Berkah</span>
+  </a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="menuNav"></div>
+</nav>
+
+<div class="page-wrap">
+<div class="container">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Rekap Transaksi</div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="pane-tanggal" onclick="switchTab(this,'pane-tanggal')">
+        📅 Per Tanggal
+      </button>
+      <button class="tab-btn" data-tab="pane-bulan" onclick="switchTab(this,'pane-bulan')">
+        🗓️ Per Bulan
+      </button>
+      <button class="tab-btn" data-tab="pane-tahun" onclick="switchTab(this,'pane-tahun')">
+        📆 Per Tahun
+      </button>
+    </div>
+
+    <!-- Per Tanggal -->
+    <div class="tab-pane active" id="pane-tanggal">
+      <div class="filter-row">
+        <div class="form-group">
+          <label>Pilih Tanggal</label>
+          <input type="date" id="filterTanggal" onchange="applyRekap()">
+        </div>
+        <button class="btn btn-primary" onclick="applyRekap()">🔍 Tampilkan</button>
+        <button class="btn btn-green" onclick="doExport('tanggal')">📥 Export Excel</button>
+      </div>
+    </div>
+
+    <!-- Per Bulan -->
+    <div class="tab-pane" id="pane-bulan">
+      <div class="filter-row">
+        <div class="form-group">
+          <label>Pilih Bulan</label>
+          <input type="month" id="filterBulan" onchange="applyRekap()">
+        </div>
+        <button class="btn btn-primary" onclick="applyRekap()">🔍 Tampilkan</button>
+        <button class="btn btn-green" onclick="doExport('bulan')">📥 Export Excel</button>
+      </div>
+    </div>
+
+    <!-- Per Tahun -->
+    <div class="tab-pane" id="pane-tahun">
+      <div class="filter-row">
+        <div class="form-group">
+          <label>Pilih Tahun</label>
+          <select id="filterTahun" onchange="applyRekap()"></select>
+        </div>
+        <button class="btn btn-primary" onclick="applyRekap()">🔍 Tampilkan</button>
+        <button class="btn btn-green" onclick="doExport('tahun')">📥 Export Excel</button>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="rekap-summary" id="rekapSummary"></div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tanggal & Waktu</th>
+            <th>Supplier</th>
+            <th>Jenis Barang</th>
+            <th>Berat</th>
+            <th style="text-align:right">Total (Rp)</th>
+          </tr>
+        </thead>
+        <tbody id="rekapBody">
+          <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">
+            Pilih filter dan klik Tampilkan
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+<script>
+function initRekap() {
+  // Set default filters ke hari ini / bulan ini / tahun ini
+  const now = new Date();
+  document.getElementById('filterTanggal').value = toDateStr(now);
+  document.getElementById('filterBulan').value   = toMonthStr(now);
+
+  // Populate tahun
+  const data = getData();
+  const years = [...new Set(data.map(d => new Date(d.waktu).getFullYear()))];
+  if (!years.includes(now.getFullYear())) years.push(now.getFullYear());
+  years.sort((a, b) => b - a);
+
+  const sel = document.getElementById('filterTahun');
+  years.forEach(y => {
+    const o = document.createElement('option');
+    o.value = y; o.text = y;
+    if (y === now.getFullYear()) o.selected = true;
+    sel.add(o);
+  });
+
+  applyRekap();
+}
+
+function doExport(mode) {
+  let val = '';
+  if (mode === 'tanggal') val = document.getElementById('filterTanggal').value;
+  if (mode === 'bulan')   val = document.getElementById('filterBulan').value;
+  if (mode === 'tahun')   val = document.getElementById('filterTahun').value;
+  if (!val) { showToast('Pilih filter terlebih dahulu', 'error'); return; }
+  exportExcel(mode, val);
+}
+</script>
+<script>
+function toggleMenu() {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('menuNav');
+  const btn = document.getElementById('hamburger');
+  if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
